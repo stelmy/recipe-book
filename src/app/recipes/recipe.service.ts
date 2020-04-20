@@ -1,7 +1,10 @@
 import {Recipe} from './recipe.model';
 import {Ingredient} from '../shared/ingredient.model';
+import {Subject} from 'rxjs';
 
 export class RecipeService {
+  recipesChanged = new Subject<Recipe[]>();
+
   private recipes: Recipe[] = [
     new Recipe(
       'Shakshuka',
@@ -20,8 +23,8 @@ export class RecipeService {
       [
         new Ingredient('Bell Pepper', 1),
         new Ingredient('Onion', 1),
-        new Ingredient('Rice', 0.1),
-        new Ingredient('Chicken', 0.2)
+        new Ingredient('Rice', 1),
+        new Ingredient('Chicken', 1)
       ]
     ),
     new Recipe(
@@ -39,5 +42,20 @@ export class RecipeService {
 
   getRecipe(index: number) {
     return this.recipes[index];
+  }
+
+  addRecipe(recipe: Recipe) {
+    this.recipes.push(recipe);
+    this.recipesChanged.next(this.recipes.slice());
+  }
+
+  updateRecipe(index: number, newRecipe: Recipe) {
+    this.recipes[index] = newRecipe;
+    this.recipesChanged.next(this.recipes.slice());
+  }
+
+  removeRecipe(index: number) {
+    this.recipes.splice(index, 1);
+    this.recipesChanged.next(this.recipes.slice());
   }
 }
