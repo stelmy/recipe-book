@@ -4,6 +4,7 @@ import {catchError, tap} from 'rxjs/operators';
 import {BehaviorSubject, throwError} from 'rxjs';
 import {User} from './user.model';
 import {Router} from '@angular/router';
+import {environment} from '../../environments/environment';
 
 export interface AuthResponseData {
   idToken: string;
@@ -22,7 +23,6 @@ export class AuthService {
   constructor(private http: HttpClient,
               private router: Router) {
   }
-  API_KEY = 'AIzaSyCYtnAFrg2rCmactrXRAAUar47W-LUrzxc';
 
   private static handleError(errorResponse: HttpErrorResponse) {
     let errorMessage = 'An unknown error occured.';
@@ -46,7 +46,7 @@ export class AuthService {
   }
 
   signUp(email: string, password: string) {
-    return this.http.post<AuthResponseData>('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=' + this.API_KEY,
+    return this.http.post<AuthResponseData>('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=' + environment.firebaseApiKey,
       { email, password, returnSecureToken: true })
       .pipe(catchError(AuthService.handleError),
         tap(responseData => {
@@ -55,7 +55,8 @@ export class AuthService {
   }
 
   logIn(email: string, password: string) {
-    return this.http.post<AuthResponseData>('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=' + this.API_KEY,
+    return this.http
+      .post<AuthResponseData>('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=' + environment.firebaseApiKey,
       { email, password, returnSecureToken: true })
       .pipe(
         catchError(AuthService.handleError),
