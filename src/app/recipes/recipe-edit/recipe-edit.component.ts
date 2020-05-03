@@ -1,8 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Params, Router} from '@angular/router';
 import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import {RecipeService} from '../recipe.service';
-import {Recipe} from '../recipe.model';
 
 @Component({
   selector: 'app-recipe-edit',
@@ -13,6 +12,11 @@ export class RecipeEditComponent implements OnInit {
   id: number;
   editMode = false;
   recipeForm: FormGroup;
+
+  get ingredientControls() {
+    const ingredients = this.recipeForm.get('ingredients') as FormArray;
+    return ingredients.controls;
+  }
 
   constructor(private route: ActivatedRoute,
               private recipeService: RecipeService,
@@ -60,11 +64,6 @@ export class RecipeEditComponent implements OnInit {
     });
   }
 
-  getIngredientControls() {
-    const ingredients = this.recipeForm.get('ingredients') as FormArray;
-    return ingredients.controls;
-  }
-
   onSubmit() {
     if (this.editMode) {
       this.recipeService.updateRecipe(this.id, this.recipeForm.value);
@@ -79,7 +78,7 @@ export class RecipeEditComponent implements OnInit {
   }
 
   onAddIngredient() {
-    this.getIngredientControls().push(
+    this.ingredientControls.push(
       new FormGroup({
         name: new FormControl(null, Validators.required),
         amount: new FormControl(null, [Validators.required, Validators.pattern(/^[1-9]+[0-9]*$/)])
