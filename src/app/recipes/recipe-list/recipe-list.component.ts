@@ -1,6 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Recipe} from '../recipe.model';
-import {RecipeService} from '../recipe.service';
 import {Subscription} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {Store} from '@ngrx/store';
@@ -16,7 +15,6 @@ export class RecipeListComponent implements OnInit, OnDestroy {
   subscription: Subscription;
 
   constructor(
-    private recipeService: RecipeService,
     private store: Store<fromApp.AppState>) { }
 
   ngOnInit(): void {
@@ -27,7 +25,6 @@ export class RecipeListComponent implements OnInit, OnDestroy {
           this.recipes = recipes;
         }
       );
-    this.recipes = this.recipeService.getRecipes();
   }
 
   ngOnDestroy(): void {

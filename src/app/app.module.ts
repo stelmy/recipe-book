@@ -31,7 +31,8 @@ import { RecipeEffects } from './recipes/store/recipe.effects';
     StoreDevtoolsModule.instrument({ logOnly: environment.production }),
     StoreRouterConnectingModule.forRoot(),
     EffectsModule.forRoot([
-      AuthEffects
+      AuthEffects,
+      RecipeEffects
     ])
   ],
   bootstrap: [
