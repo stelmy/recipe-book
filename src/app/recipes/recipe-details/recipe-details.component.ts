@@ -2,6 +2,9 @@ import {Component, OnInit} from '@angular/core';
 import {Recipe} from '../recipe.model';
 import {ActivatedRoute, Params, Router} from '@angular/router';
 import {RecipeService} from '../recipe.service';
+import { Store } from '@ngrx/store';
+import { AppState } from 'src/app/store/app.reducer';
+import { map, switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-recipe-details',
@@ -14,13 +17,26 @@ export class RecipeDetailsComponent implements OnInit {
 
   constructor(private recipeService: RecipeService,
               private route: ActivatedRoute,
-              private router: Router) { }
+              private router: Router,
+              private store: Store<AppState>) { }
 
   ngOnInit(): void {
     this.route.params
-      .subscribe((params: Params) => {
-        this.recipeId = +params.id;
-        this.recipe = this.recipeService.getRecipe(this.recipeId);
+      .pipe(
+        map(params => {
+          return +params.id;
+        }),
+        switchMap(id => {
+          this.recipeId = id;
+          return this.store.select('recipes');
+        }),
+        map(recipesState => {
+          return recipesState.recipes.find((recipe, index) => {
+            return index === this.recipeId;
+          })
+        })
+      ).subscribe(recipe => {
+        this.recipe = recipe;
       });
   }
 
